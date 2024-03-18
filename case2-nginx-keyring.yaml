@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels: #rs or deployment
+      app: ng-deploy-80
+  template:
+    metadata:
+      labels:
+        app: ng-deploy-80
+    spec:
+      containers:
+      - name: ng-deploy-80
+        #image: nginx
+        image: mysql:5.6.46 
+        env:
+          # Use secret in real usage
+        - name: MYSQL_ROOT_PASSWORD
+          value: magedu123456
+        ports:
+        - containerPort: 80
+
+        volumeMounts:
+        - name: rbd-data1
+          #mountPath: /data
+          mountPath: /var/lib/mysql
+      volumes:
+        - name: rbd-data1
+          rbd:
+            monitors:
+            - '172.31.6.101:6789'
+            - '172.31.6.102:6789'
+            - '172.31.6.103:6789'
+            pool: shijie-rbd-pool1
+            image: shijie-img-img1
+            fsType: ext4
+            readOnly: false
+            user: magedu-shijie
+            keyring: /etc/ceph/ceph.client.magedu-shijie.keyring
+

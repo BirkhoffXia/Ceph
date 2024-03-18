@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels: #rs or deployment
+      app: ng-deploy-80
+  template:
+    metadata:
+      labels:
+        app: ng-deploy-80
+    spec:
+      containers:
+      - name: ng-deploy-80
+        image: nginx
+        ports:
+        - containerPort: 80
+
+        volumeMounts:
+        - name: magedu-staticdata-cephfs 
+          mountPath: /usr/share/nginx/html/cephfs
+      volumes:
+        - name: magedu-staticdata-cephfs
+          cephfs:
+            monitors:
+            - '172.31.6.101:6789'
+            - '172.31.6.102:6789'
+            - '172.31.6.103:6789'
+            path: /
+            user: admin
+            secretRef:
+              name: ceph-secret-admin
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: ng-deploy-80-service-label
+  name: ng-deploy-80-service
+spec:
+  type: NodePort
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 80
+    nodePort: 33380
+  selector:
+    app: ng-deploy-80

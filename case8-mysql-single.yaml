@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - image: mysql:5.6.46
+        name: mysql
+        env:
+          # Use secret in real usage
+        - name: MYSQL_ROOT_PASSWORD
+          value: magedu123456
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-data-pvc 
+
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: mysql-service-label 
+  name: mysql-service
+spec:
+  type: NodePort
+  ports:
+  - name: http
+    port: 3306
+    protocol: TCP
+    targetPort: 3306
+    nodePort: 33306
+  selector:
+    app: mysql

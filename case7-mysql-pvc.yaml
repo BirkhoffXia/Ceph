@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-data-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ceph-storage-class-shijie 
+  resources:
+    requests:
+      storage: '5Gi'
