@@ -1,15 +1,15 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: ceph-storage-class-shijie
+  name: ceph-storage-class-dzzz-xks
   annotations:
     storageclass.kubernetes.io/is-default-class: "false" #设置为默认存储类
 provisioner: kubernetes.io/rbd
 parameters:
-  monitors: 172.31.6.101:6789,172.31.6.102:6789,172.31.6.103:6789
+  monitors: 192.168.40.151:6789,192.168.40.152:6789,192.168.40.153:6789
   adminId: admin
   adminSecretName: ceph-secret-admin
-  adminSecretNamespace: default 
-  pool: shijie-rbd-pool1
-  userId: magedu-shijie
-  userSecretName: ceph-secret-magedu-shijie 
+  adminSecretNamespace: default
+  pool: dzzz-rbd-pool
+  userId: dzzz-xks
+  userSecretName: ceph-secret-dzzz-xks
