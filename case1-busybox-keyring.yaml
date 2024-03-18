@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+  namespace: default
+spec:
+  containers:
+  - image: busybox 
+    command:
+      - sleep
+      - "3600"
+    imagePullPolicy: Always 
+    name: busybox
+    #restartPolicy: Always
+    volumeMounts:
+    - name: rbd-data1
+      mountPath: /data
+  volumes:
+    - name: rbd-data1
+      rbd:
+        monitors:
+        - '172.31.6.101:6789'
+        - '172.31.6.102:6789'
+        - '172.31.6.103:6789'
+        pool: shijie-rbd-pool1
+        image: shijie-img-img1
+        fsType: ext4
+        readOnly: false
+        user: magedu-shijie
+        keyring: /etc/ceph/ceph.client.magedu-shijie.keyring
