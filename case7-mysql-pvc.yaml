@@ -5,7 +5,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: ceph-storage-class-shijie 
+  storageClassName: ceph-storage-class-dzzz-xks
   resources:
     requests:
-      storage: '5Gi'
+      storage: '2Gi'
