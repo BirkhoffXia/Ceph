@@ -1,0 +1,191 @@
+# begin crush map #可调整的crush map参数
+tunable choose_local_tries 0
+tunable choose_local_fallback_tries 0
+tunable choose_total_tries 50
+tunable chooseleaf_descend_once 1
+tunable chooseleaf_vary_r 1
+tunable chooseleaf_stable 1
+tunable straw_calc_version 1
+tunable allowed_bucket_algs 54
+
+# devices #当前的设备列表
+device 0 osd.0 class hdd
+device 1 osd.1 class hdd
+device 2 osd.2 class hdd
+device 3 osd.3 class hdd
+device 4 osd.4 class hdd
+device 5 osd.5 class hdd
+device 6 osd.6 class hdd
+device 7 osd.7 class hdd
+device 8 osd.8 class hdd
+
+# types #当前支持的bucket类型
+type 0 osd #osd守护进程，对应到一个磁盘设备
+type 1 host #一个主机
+type 2 chassis #刀片服务器的迹象
+type 3 rack #包含若干个服务器的机柜/机架
+type 4 row #包含若干个机柜的一排机柜(一行机柜)
+type 5 pdu #机柜的接入电源插座
+type 6 pod #一个机房中的若干个小房间
+type 7 room #包含若干机柜的房间，一个数据中心有好多个这样的房间组成
+type 8 datacenter #一个数据中心或IDC
+type 9 zone 
+type 10 region #一个区域 比如AWS宁夏中卫数据中心
+type 11 root #bucket分层的最顶部，根
+
+# buckets 
+host ceph-node1 { #类型Host名称为：ceph-node1
+        id -3           # do not change unnecessarily   #ceph生成的OSD ID 非必要不要改
+        id -4 class hdd         # do not change unnecessarily
+        # weight 1.558
+        alg straw2 #算法 管理OSD角色
+        hash 0  # rjenkins1  #使用是哪个hash算法，0表示选择rjenkinks1这种hash算法
+        item osd.0 weight 0.029  #osd0 权重比例，crush 会自动根据磁盘空间计算，不同的磁盘空间的权重不一样
+        item osd.1 weight 1.500
+        item osd.2 weight 0.029
+}
+host ceph-node2 {
+        id -5           # do not change unnecessarily
+        id -6 class hdd         # do not change unnecessarily
+        # weight 0.087
+        alg straw2
+        hash 0  # rjenkins1
+        item osd.3 weight 0.029
+        item osd.4 weight 0.029
+        item osd.5 weight 0.029
+}
+host ceph-node3 {
+        id -7           # do not change unnecessarily
+        id -8 class hdd         # do not change unnecessarily
+        # weight 0.087
+        alg straw2
+        hash 0  # rjenkins1
+        item osd.6 weight 0.029
+        item osd.7 weight 0.029
+        item osd.8 weight 0.029
+}
+root default { #根的配置
+        id -1           # do not change unnecessarily
+        id -2 class hdd         # do not change unnecessarily
+        # weight 1.735
+        alg straw2
+        hash 0  # rjenkins1
+        item ceph-node1 weight 1.559
+        item ceph-node2 weight 0.088
+        item ceph-node3 weight 0.088
+}
+
+
+
+#Test SSD Conf
+host ceph-ssdnode1 { #类型Host名称为：ceph-node1
+        id -13           # do not change unnecessarily   #ceph生成的OSD ID 非必要不要改
+        id -14 class hdd         # do not change unnecessarily
+        # weight 1.558
+        alg straw2 #算法 管理OSD角色
+        hash 0  # rjenkins1  #使用是哪个hash算法，0表示选择rjenkinks1这种hash算法
+        item osd.2 weight 0.029
+}
+host ceph-ssdnode2 {
+        id -15           # do not change unnecessarily
+        id -16 class hdd         # do not change unnecessarily
+        # weight 0.087
+        alg straw2
+        hash 0  # rjenkins1
+        item osd.5 weight 0.029
+}
+host ceph-ssdnode3 {
+        id -17           # do not change unnecessarily
+        id -18 class hdd         # do not change unnecessarily
+        # weight 0.087
+        alg straw2
+        hash 0  # rjenkins1
+        item osd.8 weight 0.029
+}
+#Test Bucket
+root ssd { #根的配置
+        id -21           # do not change unnecessarily
+        id -22 class hdd         # do not change unnecessarily
+        # weight 1.735
+        alg straw2
+        hash 0  # rjenkins1
+        item ceph-ssdnode1 weight 1.559
+        item ceph-ssdnode2 weight 0.088
+        item ceph-ssdnode3 weight 0.088
+}
+
+#Test HDD Conf
+host ceph-hddnode1 { #类型Host名称为：ceph-node1
+        id -23           # do not change unnecessarily   #ceph生成的OSD ID 非必要不要改
+        id -24 class hdd         # do not change unnecessarily
+        # weight 1.558
+        alg straw2 #算法 管理OSD角色
+        hash 0  # rjenkins1  #使用是哪个hash算法，0表示选择rjenkinks1这种hash算法
+        item osd.0 weight 0.029  #osd0 权重比例，crush 会自动根据磁盘空间计算，不同的磁盘空间的权重不一样
+        item osd.1 weight 1.500
+}
+host ceph-hddnode2 {
+        id -25           # do not change unnecessarily
+        id -26 class hdd         # do not change unnecessarily
+        # weight 0.087
+        alg straw2
+        hash 0  # rjenkins1
+        item osd.3 weight 0.029
+        item osd.4 weight 0.029
+}
+host ceph-hddnode3 {
+        id -27           # do not change unnecessarily
+        id -28 class hdd         # do not change unnecessarily
+        # weight 0.087
+        alg straw2
+        hash 0  # rjenkins1
+        item osd.6 weight 0.029
+        item osd.7 weight 0.029
+}
+#Test HDD Bucket
+root hdd { #根的配置
+        id -31           # do not change unnecessarily
+        id -32 class hdd         # do not change unnecessarily
+        # weight 1.735
+        alg straw2
+        hash 0  # rjenkins1
+        item ceph-hddnode1 weight 1.559
+        item ceph-hddnode2 weight 0.088
+        item ceph-hddnode3 weight 0.088
+}
+
+#Rules
+#Test HDD rules
+rule hdd_replicated_rule { #副本池的默认配置
+        id 40
+        type replicated
+        min_size 1
+        max_size 8
+        step take hdd 
+        step chooseleaf firstn 0 type host 
+        step emit 
+}
+
+#Test SSD rules
+rule ssd_replicated_rule { #副本池的默认配置
+        id 30
+        type replicated
+        min_size 1
+        max_size 6
+        step take ssd 
+        step chooseleaf firstn 0 type host 
+        step emit 
+}
+
+# rules 
+rule replicated_rule { #副本池的默认配置
+        id 0
+        type replicated
+        min_size 1
+        max_size 12 #默认最大时10
+        step take default #基于default定义的主机分配OSD
+        step chooseleaf firstn 0 type host #选择主机。故障域类型为主机
+        step emit #弹出配置即返回给客户端
+}
+
+# end crush map
